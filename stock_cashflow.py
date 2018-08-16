@@ -1,8 +1,8 @@
 # 出来高上位50の寄り値と現値を比較し、資金の流出を測る
 import pandas as pd 
-import reequests 
+import requests 
 from bs4 import BeautifulSoup
-from time sleep
+from time import sleep
 
 
 def make_top50():
@@ -19,24 +19,24 @@ def make_price(df):
 
 	for code in df.index:
 		r = requests.get('https://stocks.finance.yahoo.co.jp/stocks/detail/?code={}.T'.format(code))
-        soup = BeautifulSoup(r.text, 'lxml')
-        prices = soup.find_all('dd', class_='ymuiEditLink mar0')
-        yester_p = float(prices[0].contents[0].text.replace(',', ''))
-        open_p = float(prices[1].contents[0].text.replace(',', ''))
-        open_time = prices[1].contents[1].text
-        high_p = float(prices[2].contents[1].text.replace(',', ''))
-        high_time = prices[2].contents[2].text
-        low_p = float(prices[3].contents[1].text.replace(',', ''))
-        low_time = prices[3].contents[2].text
+		soup = BeautifulSoup(r.text, 'lxml')
+		prices = soup.find_all('dd', class_='ymuiEditLink mar0')
+		yester_p = float(prices[0].contents[0].text.replace(',', ''))
+		open_p = float(prices[1].contents[0].text.replace(',', ''))
+		open_time = prices[1].contents[1].text
+		high_p = float(prices[2].contents[1].text.replace(',', ''))
+		high_time = prices[2].contents[2].text
+		low_p = float(prices[3].contents[1].text.replace(',', ''))
+		low_time = prices[3].contents[2].text
             
-        three_prices['{}'.format(code)]  = [yester_p, open_p, open_time, high_p, high_time, low_p, low_time]
+		three_prices['{}'.format(code)]  = [yester_p, open_p, open_time, high_p, high_time, low_p, low_time]
             
-        sleep(1)
+		sleep(1)
         
-        three_prices = pd.DataFrame(three_prices).T 
-        three_prices.columns = ['前日終値', '寄値', '寄り時間', '高値', '高値時間', '安値', '安値時間']  
+	three_prices = pd.DataFrame(three_prices).T 
+	three_prices.columns = ['前日終値', '寄値', '寄り時間', '高値', '高値時間', '安値', '安値時間']  
 
-    return three_prices
+	return three_prices
 
 def make_data():
 	df = make_top50()
@@ -47,4 +47,3 @@ def make_data():
 	df2['寄り比率'] = (pd.to_numeric(df2['価格']) - pd.to_numeric(df2['寄値'])) / pd.to_numeric(df2['寄値']) * 100
 
 	return df2
-
